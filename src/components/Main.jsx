@@ -2,6 +2,7 @@ import { MdAdd } from "react-icons/md";
 import IngredientList from "./IngredientList";
 import { useContext, useState } from "react";
 import { ingredientContext } from "../context/IngredientContext";
+import GetRecipe from "./GetRecipe";
 export default function Main() {
   const { ingredientsList, setIngredientsList } = useContext(ingredientContext);
   const [ingredient, setIngredient] = useState("");
@@ -11,7 +12,6 @@ export default function Main() {
     setIngredientsList((prevValue) => [...prevValue, ingredient]);
     setIngredient("");
   };
-  console.log(ingredientsList);
   return (
     <main className="w-full bg-[#FAFAF8] min-h-screen py-8 px-12">
       <form
@@ -25,11 +25,18 @@ export default function Main() {
           value={ingredient}
           onChange={(e) => setIngredient(e.target.value)}
         />
-        <button className="font-inter py-[9px] px-[17px] rounded-lg bg-[#141413] shadow-sm text-white flex justify-center items-center gap-2">
+        <button className=" cursor-pointer font-inter py-[9px] px-[17px] rounded-lg bg-[#141413] shadow-sm text-white flex justify-center items-center gap-2">
           <MdAdd /> Add ingredient
         </button>
       </form>
-      <IngredientList />
+      {ingredientsList.length ? (
+        <section>
+          <IngredientList />
+          {ingredientsList.length > 3 && <GetRecipe />}
+        </section>
+      ) : (
+        ""
+      )}
     </main>
   );
 }
