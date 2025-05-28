@@ -7,6 +7,7 @@ export default function Main() {
   const [ingredient, setIngredient] = useState("");
   const handleAddIngredient = (e) => {
     e.preventDefault();
+    if (!ingredient) return;
     setIngredientsList((prevValue) => [...prevValue, ingredient]);
     setIngredient("");
   };
