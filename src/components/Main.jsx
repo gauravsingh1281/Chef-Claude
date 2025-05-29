@@ -1,4 +1,5 @@
 import { MdAdd } from "react-icons/md";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import IngredientList from "./IngredientList";
 import { useContext, useEffect, useRef, useState } from "react";
 import { ingredientContext } from "../context/IngredientContext";
@@ -10,10 +11,12 @@ export default function Main() {
   const [ingredient, setIngredient] = useState("");
   const [generatedRecipe, setGeneratedRecipe] = useState("");
   const generatedRecipeSection = useRef(null);
+  const [isLoading, setIsloading] = useState(false);
 
   useEffect(() => {
     if (generatedRecipe !== "" && generatedRecipeSection !== null) {
-      generatedRecipeSection.current.scrollIntoView({ behavior: "smooth" });
+      setIsloading(false);
+      generatedRecipeSection?.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [generatedRecipe]);
 
@@ -25,24 +28,29 @@ export default function Main() {
   };
 
   const generateRecipe = async () => {
+    setIsloading(true);
     const recipeMarkdown = await getRecipeFromMistral(ingredientsList);
     setGeneratedRecipe(recipeMarkdown);
-    console.log(recipeMarkdown);
+  };
+  const generateNewRecipe = () => {
+    setGeneratedRecipe("");
+    setIngredientsList([]);
   };
   return (
     <main>
       <form onSubmit={handleAddIngredient} className="add-ingredient-form">
         <input
           type="text"
-          className="py-[9px] px-[13px] border-1 border-[#D1D5DB] rounded-lg shadow-sm grow-1 min-w-[150px] max-w-[400px] outline-0"
           placeholder="e.g. oregano"
           value={ingredient}
           onChange={(e) => setIngredient(e.target.value)}
         />
+
         <button>
           <MdAdd /> Add ingredient
         </button>
       </form>
+
       {ingredientsList.length ? (
         <section>
           <IngredientList />
@@ -50,13 +58,26 @@ export default function Main() {
             <GetRecipe
               generateRecipe={generateRecipe}
               ref={generatedRecipeSection}
+              generatedRecipe={generatedRecipe}
+              generateNewRecipe={generateNewRecipe}
             />
           )}
         </section>
       ) : (
         ""
       )}
-      {generatedRecipe && <RecipeResult generatedRecipe={generatedRecipe} />}
+      {isLoading && !generatedRecipe ? (
+        <div className="loader-overlay">
+          <DotLottieReact
+            style={{ width: "70%", height: "70%" }}
+            src="https://lottie.host/09e7978f-4e18-4a32-9d00-eee172301835/m2Ls3syoPD.lottie"
+            loop
+            autoplay
+          />
+        </div>
+      ) : (
+        generatedRecipe && <RecipeResult generatedRecipe={generatedRecipe} />
+      )}
     </main>
   );
 }
