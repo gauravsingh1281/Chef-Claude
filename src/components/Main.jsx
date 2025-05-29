@@ -1,6 +1,6 @@
 import { MdAdd } from "react-icons/md";
 import IngredientList from "./IngredientList";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { ingredientContext } from "../context/IngredientContext";
 import GetRecipe from "./GetRecipe";
 import { getRecipeFromMistral } from "../huggingFaceAi";
@@ -9,6 +9,14 @@ export default function Main() {
   const { ingredientsList, setIngredientsList } = useContext(ingredientContext);
   const [ingredient, setIngredient] = useState("");
   const [generatedRecipe, setGeneratedRecipe] = useState("");
+  const generatedRecipeSection = useRef(null);
+
+  useEffect(() => {
+    if (generatedRecipe !== "" && generatedRecipeSection !== null) {
+      generatedRecipeSection.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [generatedRecipe]);
+
   const handleAddIngredient = (e) => {
     e.preventDefault();
     if (!ingredient) return;
@@ -39,7 +47,10 @@ export default function Main() {
         <section>
           <IngredientList />
           {ingredientsList.length > 3 && (
-            <GetRecipe generateRecipe={generateRecipe} />
+            <GetRecipe
+              generateRecipe={generateRecipe}
+              ref={generatedRecipeSection}
+            />
           )}
         </section>
       ) : (

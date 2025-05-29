@@ -10,8 +10,8 @@ export default function IngredientList() {
           Ingredients on hand:
         </h2>
         <ul className="ingredients-list">
-          {ingredientsList.map((ingredient) => (
-            <li>{ingredient}</li>
+          {ingredientsList.map((ingredient, index) => (
+            <li key={index}>{ingredient}</li>
           ))}
         </ul>
       </div>

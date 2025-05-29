@@ -1,8 +1,8 @@
-export default function GetRecipe({ generateRecipe }) {
+export default function GetRecipe({ generateRecipe, ref }) {
   return (
     <>
       <div className="get-recipe-container">
-        <div>
+        <div ref={ref}>
           <h3 className="font-inter text-[#141413] text-lg font-[500] ">
             Ready for a recipe?
           </h3>
