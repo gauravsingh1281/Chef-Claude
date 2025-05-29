@@ -9,7 +9,7 @@ export default function IngredientList() {
         <h2 className="font-inter text-3xl text-[#141413] font-semibold">
           Ingredients on hand:
         </h2>
-        <ul className="list-disc ml-6 leading-[35px] text-[#475467]  text-lg">
+        <ul className="ingredients-list">
           {ingredientsList.map((ingredient) => (
             <li>{ingredient}</li>
           ))}

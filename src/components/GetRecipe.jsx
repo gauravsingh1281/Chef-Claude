@@ -1,11 +1,7 @@
-import { useState } from "react";
-import RecipeResult from "./RecipeResult";
-
-export default function GetRecipe() {
-  const [showRecipe, setShowRecipe] = useState(false);
+export default function GetRecipe({ generateRecipe }) {
   return (
     <>
-      <div className="w-1/2 mx-auto bg-[#F0EFEB] rounded-lg flex justify-between items-center px-8 py-7 my-9">
+      <div className="get-recipe-container">
         <div>
           <h3 className="font-inter text-[#141413] text-lg font-[500] ">
             Ready for a recipe?
@@ -14,14 +10,8 @@ export default function GetRecipe() {
             Generate a recipe from your list of ingredients.
           </p>
         </div>
-        <button
-          onClick={() => setShowRecipe((prevState) => !prevState)}
-          className=" font-inter text-sm text-[#FAFAF8] bg-[#D17557] py-[9px] px-[17px] rounded-md cursor-pointer"
-        >
-          Get a recipe
-        </button>
+        <button onClick={generateRecipe}>Get a recipe</button>
       </div>
-      {showRecipe && <RecipeResult />}
     </>
   );
 }

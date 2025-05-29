@@ -3,21 +3,27 @@ import IngredientList from "./IngredientList";
 import { useContext, useState } from "react";
 import { ingredientContext } from "../context/IngredientContext";
 import GetRecipe from "./GetRecipe";
+import { getRecipeFromMistral } from "../huggingFaceAi";
+import RecipeResult from "./RecipeResult";
 export default function Main() {
   const { ingredientsList, setIngredientsList } = useContext(ingredientContext);
   const [ingredient, setIngredient] = useState("");
+  const [generatedRecipe, setGeneratedRecipe] = useState("");
   const handleAddIngredient = (e) => {
     e.preventDefault();
     if (!ingredient) return;
     setIngredientsList((prevValue) => [...prevValue, ingredient]);
     setIngredient("");
   };
+
+  const generateRecipe = async () => {
+    const recipeMarkdown = await getRecipeFromMistral(ingredientsList);
+    setGeneratedRecipe(recipeMarkdown);
+    console.log(recipeMarkdown);
+  };
   return (
-    <main className="w-full bg-[#FAFAF8] min-h-screen py-8 px-12">
-      <form
-        onSubmit={handleAddIngredient}
-        className="flex justify-center items-center gap-4 h-10"
-      >
+    <main>
+      <form onSubmit={handleAddIngredient} className="add-ingredient-form">
         <input
           type="text"
           className="py-[9px] px-[13px] border-1 border-[#D1D5DB] rounded-lg shadow-sm grow-1 min-w-[150px] max-w-[400px] outline-0"
@@ -25,18 +31,21 @@ export default function Main() {
           value={ingredient}
           onChange={(e) => setIngredient(e.target.value)}
         />
-        <button className=" cursor-pointer font-inter py-[9px] px-[17px] rounded-lg bg-[#141413] shadow-sm text-white flex justify-center items-center gap-2">
+        <button>
           <MdAdd /> Add ingredient
         </button>
       </form>
       {ingredientsList.length ? (
         <section>
           <IngredientList />
-          {ingredientsList.length > 3 && <GetRecipe />}
+          {ingredientsList.length > 3 && (
+            <GetRecipe generateRecipe={generateRecipe} />
+          )}
         </section>
       ) : (
         ""
       )}
+      {generatedRecipe && <RecipeResult generatedRecipe={generatedRecipe} />}
     </main>
   );
 }
