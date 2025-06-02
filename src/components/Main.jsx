@@ -1,7 +1,7 @@
 import { MdAdd } from "react-icons/md";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import IngredientList from "./IngredientList";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState, useTransition } from "react";
 import { ingredientContext } from "../context/IngredientContext";
 import GetRecipe from "./GetRecipe";
 import { getRecipeFromMistral } from "../huggingFaceAi";
@@ -11,11 +11,10 @@ export default function Main() {
   const [ingredient, setIngredient] = useState("");
   const [generatedRecipe, setGeneratedRecipe] = useState("");
   const generatedRecipeSection = useRef(null);
-  const [isLoading, setIsloading] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     if (generatedRecipe !== "" && generatedRecipeSection !== null) {
-      setIsloading(false);
       generatedRecipeSection?.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [generatedRecipe]);
@@ -28,10 +27,12 @@ export default function Main() {
   };
 
   const generateRecipe = async () => {
-    setIsloading(true);
-    const recipeMarkdown = await getRecipeFromMistral(ingredientsList);
-    setGeneratedRecipe(recipeMarkdown);
+    startTransition(async () => {
+      const recipeMarkdown = await getRecipeFromMistral(ingredientsList);
+      setGeneratedRecipe(recipeMarkdown);
+    });
   };
+
   const generateNewRecipe = () => {
     setGeneratedRecipe("");
     setIngredientsList([]);
@@ -66,7 +67,7 @@ export default function Main() {
       ) : (
         ""
       )}
-      {isLoading && !generatedRecipe ? (
+      {isPending && !generatedRecipe ? (
         <div className="loader-overlay">
           <DotLottieReact
             style={{ width: "70%", height: "70%" }}
